@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="mingo.png" type="image/png">
+    <title>Understanding Software Development</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://unpkg.com/monaco-editor@0.45.0/min/vs/loader.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1f2a5a 0%, orange 100%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .concept-card {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        .concept-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+        }
+        .interactive-element {
+            transition: all 0.2s ease;
+        }
+        .interactive-element:hover {
+            transform: scale(1.05);
+        }
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .code-editor {
+            height: 400px;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="gradient-bg text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-2xl font-bold">Mi<span style="color: orange;">ngo</span>Learn</h1>
+                    <span class="text-sm opacity-80">Understanding Software Development with mengo</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="index.html"><button class="hover:text-blue-200 transition">Home</button></a>
+                    <button id="homeBtn" class="hover:text-blue-200 transition">Back</button>
+                    <button id="conceptsBtn" class="hover:text-blue-200 transition">Concepts</button>
+                    <button id="interactiveBtn" class="hover:text-blue-200 transition">Interactive</button>
+                    <button id="progressBtn" class="hover:text-blue-200 transition">Progress</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div id="mainContent" class="container mx-auto px-6 py-8">
+        
+        <!-- Home Section -->
+        <section id="homeSection" class="page-section">
+            <div class="text-center mb-12">
+                <h2 class="text-5xl font-bold text-gray-800 mb-4">Master Software Development</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Learn software development concepts through interactive tutorials, visual explanations, and hands-on coding exercises. 
+                    From basic concepts to advanced architectures.
+                </p>
+            </div>
+
+            <!-- Feature Cards -->
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="concept-card bg-white rounded-xl shadow-lg p-6 hover:shadow-xl">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Interactive Concepts</h3>
+                    <p class="text-gray-600">Visual and interactive explanations of programming concepts, algorithms, and data structures.</p>
+                </div>
+
+                <div class="concept-card bg-white rounded-xl shadow-lg p-6 hover:shadow-xl">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Live Code Editor</h3>
+                    <p class="text-gray-600">Practice coding with our integrated Monaco editor with syntax highlighting and instant feedback.</p>
+                </div>
+
+                <div class="concept-card bg-white rounded-xl shadow-lg p-6 hover:shadow-xl">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Progress Tracking</h3>
+                    <p class="text-gray-600">Track your learning progress with visual indicators and achievement badges.</p>
+                </div>
+            </div>
+
+            <!-- Quick Start Button -->
+            <div class="text-center">
+                <button id="startLearningBtn" class="interactive-element bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 shadow-lg">
+                    Start Learning Now
+                </button>
+            </div>
+        </section>
+
+        <!-- Concepts Section -->
+        <section id="conceptsSection" class="page-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8">Software Development Concepts</h2>
+            
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Concept Categories -->
+                <div class="space-y-6">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <span class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                                </svg>
+                            </span>
+                            Programming Fundamentals
+                        </h3>
+                        <div class="space-y-3">
+                            <button class="concept-item w-full text-left p-3 rounded-lg hover:bg-gray-50 transition" data-concept="variables">
+                                <div class="font-medium">Variables & Data Types</div>
+                                <div class="text-sm text-gray-600">Understanding how data is stored and manipulated</div>
+                            </button>
+                            <button class="concept-item w-full text-left p-3 rounded-lg hover:bg-gray-50 transition" data-concept="functions">
+                                <div class="font-medium">Functions & Methods</div>
+                                <div class="text-sm text-gray-600">Reusable blocks of code that perform specific tasks</div>
+                            </button>
+                            <button class="concept-item w-full text-left p-3 rounded-lg hover:bg-gray-50 transition" data-concept="loops">
+                                <div class="font-medium">Loops & Iteration</div>
+                                <div class="text-sm text-gray-600">Repeating code blocks efficiently</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <span class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
+                                </svg>
+                            </span>
+                            Data Structures
+                        </h3>
+                        <div class="space-y-3">
+                            <button class="concept-item w-full text-left p-3 rounded-lg hover:bg-gray-50 transition" data-concept="arrays">
+                                <div class="font-medium">Arrays & Lists</div>
+                                <div class="text-sm text-gray-600">Ordered collections of data</div>
+                            </button>
+                            <button class="concept-item w-full text-left p-3 rounded-lg hover:bg-gray-50 transition" data-concept="objects">
+                                <div class="font-medium">Objects & Maps</div>
+                                <div class="text-sm text-gray-600">Key-value pair data structures</div>
+                            </button>
+                            <button class="concept-item w-full text-left p-3 rounded-lg hover:bg-gray-50 transition" data-concept="trees">
+                                <div class="font-medium">Trees & Graphs</div>
+                                <div class="text-sm text-gray-600">Hierarchical data organization</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Concept Details -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div id="conceptDetails" class="concept-details">
+                        <div class="text-center text-gray-500 py-12">
+                            <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            <p>Select a concept from the left to learn more about it</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Section -->
+        <section id="interactiveSection" class="page-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8">Interactive Code Playground</h2>
+            
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Code Editor -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Code Editor</h3>
+                    <div class="flex space-x-2 mb-4">
+                        <button class="language-btn px-3 py-1 rounded bg-blue-100 text-blue-700 text-sm" data-lang="javascript">JavaScript</button>
+                        <button class="language-btn px-3 py-1 rounded bg-gray-100 text-gray-700 text-sm" data-lang="python">Python</button>
+                        <button class="language-btn px-3 py-1 rounded bg-gray-100 text-gray-700 text-sm" data-lang="css">CSS</button>
+                    </div>
+                    <div id="codeEditor" class="code-editor"></div>
+                    <button id="runCode" class="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                        Run Code
+                    </button>
+                </div>
+
+                <!-- Output -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Output</h3>
+                    <div id="codeOutput" class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm h-96 overflow-auto">
+                        <div class="text-gray-500">Click "Run Code" to see the output here...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Examples -->
+            <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-semibold mb-4">Interactive Examples</h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <button class="example-btn p-4 border rounded-lg hover:bg-blue-50 transition text-left" data-example="hello-world">
+                        <div class="font-medium">Hello World</div>
+                        <div class="text-sm text-gray-600">Basic output program</div>
+                    </button>
+                    <button class="example-btn p-4 border rounded-lg hover:bg-blue-50 transition text-left" data-example="variables">
+                        <div class="font-medium">Variables Demo</div>
+                        <div class="text-sm text-gray-600">Working with data types</div>
+                    </button>
+                    <button class="example-btn p-4 border rounded-lg hover:bg-blue-50 transition text-left" data-example="functions">
+                        <div class="font-medium">Functions</div>
+                        <div class="text-sm text-gray-600">Creating reusable code</div>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progress Section -->
+        <section id="progressSection" class="page-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8">Your Learning Progress</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Progress Overview -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Overall Progress</h3>
+                    <div class="flex items-center justify-center mb-6">
+                        <div class="relative">
+                            <svg class="w-32 h-32">
+                                <circle cx="64" cy="64" r="56" stroke="#e5e7eb" stroke-width="12" fill="none"/>
+                                <circle id="progressCircle" cx="64" cy="64" r="56" stroke="#3b82f6" stroke-width="12" fill="none"
+                                        stroke-dasharray="351.86" stroke-dashoffset="351.86" stroke-linecap="round" class="progress-ring"/>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span id="progressText" class="text-2xl font-bold">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span>Concepts Learned</span>
+                            <span id="conceptsLearned">0 / 9</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Code Examples Completed</span>
+                            <span id="examplesCompleted">0 / 12</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievements -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Achievements</h3>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="achievement-item text-center opacity-50" data-achievement="first-step">
+                            <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <svg class="w-8 h-8 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            </div>
+                            <div class="text-sm">First Step</div>
+                        </div>
+                        <div class="achievement-item text-center opacity-50" data-achievement="explorer">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div class="text-sm">Explorer</div>
+                        </div>
+                        <div class="achievement-item text-center opacity-50" data-achievement="coder">
+                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div class="text-sm">Coder</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Path -->
+            <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-semibold mb-4">Learning Path</h3>
+                <div class="space-y-4">
+                    <div class="learning-step flex items-center p-4 rounded-lg border" data-step="1">
+                        <div class="step-icon w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-sm font-semibold">1</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium">Programming Basics</div>
+                            <div class="text-sm text-gray-600">Variables, data types, and basic syntax</div>
+                        </div>
+                        <div class="step-status text-gray-400">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="learning-step flex items-center p-4 rounded-lg border" data-step="2">
+                        <div class="step-icon w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-sm font-semibold">2</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium">Control Flow</div>
+                            <div class="text-sm text-gray-600">Conditions, loops, and logical operations</div>
+                        </div>
+                        <div class="step-status text-gray-400">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="learning-step flex items-center p-4 rounded-lg border" data-step="3">
+                        <div class="step-icon w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-sm font-semibold">3</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium">Functions & Modules</div>
+                            <div class="text-sm text-gray-600">Creating reusable code components</div>
+                        </div>
+                        <div class="step-status text-gray-400">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Monaco Editor setup
+        let editor;
+        let currentLanguage = 'javascript';
+        
+        require.config({ paths: { vs: 'https://unpkg.com/monaco-editor@0.45.0/min/vs' } });
+        require(['vs/editor/editor.main'], function () {
+            editor = monaco.editor.create(document.getElementById('codeEditor'), {
+                value: `// Welcome to DevLearn Interactive Code Playground!
+// Try writing some JavaScript code and click "Run Code"
+
+function greet(name) {
+    return "Hello, " + name + "!";
+}
+
+console.log(greet("Developer"));
+console.log("Current date:", new Date().toLocaleDateString());`,
+                language: currentLanguage,
+                theme: 'vs-dark',
+                automaticLayout: true,
+                minimap: { enabled: false }
+            });
+        });
+
+        // Concept data
+        const concepts = {
+            variables: {
+                title: 'Variables & Data Types',
+                description: 'Variables are containers for storing data values. In JavaScript, we use let, const, and var to declare variables.',
+                code: `// Variable declaration
+let name = "seleman";
+const age = 25;
+var isStudent = true;
+
+// Different data types
+let string = "Hello World";
+let number = 42;
+let boolean = true;
+let array = [1, 2, 3, 4, 5];
+let object = { name: "seleman", age: 25 };`,
+                explanation: 'Variables can hold different types of data: strings, numbers, booleans, arrays, and objects.'
+            },
+            functions: {
+                title: 'Functions & Methods',
+                description: 'Functions are reusable blocks of code that perform specific tasks. They help organize code and avoid repetition.',
+                code: `// Function declaration
+function greet(name) {
+    return "Hello, " + name + "!";
+}
+
+// Arrow function
+const add = (a, b) => a + b;
+
+// Function usage
+console.log(greet("seleman"));
+console.log(add(5, 3));`,
+                explanation: 'Functions can be declared in different ways and can accept parameters and return values.'
+            },
+            loops: {
+                title: 'Loops & Iteration',
+                description: 'Loops allow you to repeat code blocks multiple times. Common types are for, while, and forEach loops.',
+                code: `// For loop
+for (let i = 0; i < 5; i++) {
+    console.log("Iteration:", i);
+}
+
+// While loop
+let count = 0;
+while (count < 3) {
+    console.log("Count:", count);
+    count++;
+}`,
+                explanation: 'Loops are essential for iterating over data and repeating operations.'
+            },
+            arrays: {
+                title: 'Arrays & Lists',
+                description: 'Arrays are ordered collections of data. They can store multiple values and provide various methods for manipulation.',
+                code: `// Array creation
+let fruits = ["apple", "banana", "orange"];
+
+// Array methods
+fruits.push("grape");
+fruits.pop();
+fruits.forEach(fruit => console.log(fruit));
+
+// Array access
+console.log(fruits[0]); // First element
+console.log(fruits.length); // Array length`,
+                explanation: 'Arrays provide powerful methods for data manipulation and iteration.'
+            },
+            objects: {
+                title: 'Objects & Maps',
+                description: 'Objects are collections of key-value pairs. They represent real-world entities and their properties.',
+                code: `// Object creation
+let person = {
+    name: "Dr seleman",
+    age: 30,
+    city: "New York",
+    greet: function() {
+        return "Hello, I'm " + this.name;
+    }
+};
+
+// Object access
+console.log(person.name);
+console.log(person.greet());`,
+                explanation: 'Objects can contain properties and methods, making them ideal for modeling complex data.'
+            },
+            trees: {
+                title: 'Trees & Graphs',
+                description: 'Trees are hierarchical data structures with parent-child relationships. They are used in file systems, DOM, and more.',
+                code: `// Simple tree structure
+let tree = {
+    value: 1,
+    children: [
+        {
+            value: 2,
+            children: [
+                { value: 4, children: [] },
+                { value: 5, children: [] }
+            ]
+        },
+        {
+            value: 3,
+            children: []
+        }
+    ]
+};
+
+// Tree traversal
+function traverse(node) {
+    console.log(node.value);
+    node.children.forEach(child => traverse(child));
+}`,
+                explanation: 'Trees are fundamental for representing hierarchical relationships and efficient searching.'
+            }
+        };
+
+        // Example code snippets
+        const examples = {
+            'hello-world': {
+                javascript: `console.log("Hello, World!");
+console.log("Welcome to DevLearn!");`,
+                python: `print("Hello, World!")
+print("Welcome to DevLearn!")`,
+                css: `body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+}`
+            },
+            variables: {
+                javascript: `let name = "seleman";
+let age = 25;
+let isLearning = true;
+
+console.log("Name:", name);
+console.log("Age:", age);
+console.log("Is Learning:", isLearning);`,
+                python: `name = "Developer"
+age = 25
+is_learning = True
+
+print("Name:", name)
+print("Age:", age)
+print("Is Learning:", is_learning)`,
+                css: `:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --font-size: 16px;
+}
+
+body {
+    color: var(--primary-color);
+    font-size: var(--font-size);
+}`
+            },
+            functions: {
+                javascript: `function calculateArea(radius) {
+    return Math.PI * radius * radius;
+}
+
+let radius = 5;
+let area = calculateArea(radius);
+console.log("Area of circle with radius", radius, "is:", area.toFixed(2));`,
+                python: `import math
+
+def calculate_area(radius):
+    return math.pi * radius * radius
+
+radius = 5
+area = calculate_area(radius)
+print(f"Area of circle with radius {radius} is: {area:.2f}")`,
+                css: `.button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}`
+            }
+        };
+
+        // Progress tracking
+        let progress = {
+            concepts: new Set(),
+            examples: new Set(),
+            achievements: new Set()
+        };
+
+        // Navigation
+        const sections = {
+            home: document.getElementById('homeSection'),
+            concepts: document.getElementById('conceptsSection'),
+            interactive: document.getElementById('interactiveSection'),
+            progress: document.getElementById('progressSection')
+        };
+
+        function showSection(sectionName) {
+            Object.values(sections).forEach(section => section.classList.add('hidden'));
+            sections[sectionName].classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.classList.remove('text-blue-200');
+                btn.classList.add('text-white');
+            });
+            document.getElementById(sectionName + 'Btn').classList.add('text-blue-200');
+        }
+
+        // Event listeners
+        document.getElementById('homeBtn').addEventListener('click', () => showSection('home'));
+        document.getElementById('conceptsBtn').addEventListener('click', () => showSection('concepts'));
+        document.getElementById('interactiveBtn').addEventListener('click', () => showSection('interactive'));
+        document.getElementById('progressBtn').addEventListener('click', () => showSection('progress'));
+        document.getElementById('startLearningBtn').addEventListener('click', () => showSection('concepts'));
+
+        // Concept interactions
+        document.querySelectorAll('.concept-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const conceptKey = this.dataset.concept;
+                const concept = concepts[conceptKey];
+                
+                if (concept) {
+                    document.getElementById('conceptDetails').innerHTML = `
+                        <h4 class="text-2xl font-bold mb-4">${concept.title}</h4>
+                        <p class="text-gray-600 mb-6">${concept.description}</p>
+                        <div class="mb-6">
+                            <h5 class="font-semibold mb-2">Example Code:</h5>
+                            <pre class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto"><code class="language-javascript">${concept.code}</code></pre>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h5 class="font-semibold mb-2">Explanation:</h5>
+                            <p class="text-blue-800">${concept.explanation}</p>
+                        </div>
+                    `;
+                    
+                    // Mark concept as learned
+                    progress.concepts.add(conceptKey);
+                    updateProgress();
+                    
+                    // Highlight Prism.js code
+                    Prism.highlightAll();
+                }
+            });
+        });
+
+        // Language switching
+        document.querySelectorAll('.language-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const language = this.dataset.lang;
+                
+                // Update button styles
+                document.querySelectorAll('.language-btn').forEach(b => {
+                    b.classList.remove('bg-blue-100', 'text-blue-700');
+                    b.classList.add('bg-gray-100', 'text-gray-700');
+                });
+                this.classList.remove('bg-gray-100', 'text-gray-700');
+                this.classList.add('bg-blue-100', 'text-blue-700');
+                
+                // Update editor language
+                currentLanguage = language;
+                if (editor) {
+                    monaco.editor.setModelLanguage(editor.getModel(), language);
+                }
+            });
+        });
+
+        // Run code
+        document.getElementById('runCode').addEventListener('click', function() {
+            const code = editor.getValue();
+            const output = document.getElementById('codeOutput');
+            
+            try {
+                // Clear previous output
+                output.innerHTML = '';
+                
+                // Capture console.log output
+                const originalLog = console.log;
+                console.log = function(...args) {
+                    output.innerHTML += args.join(' ') + '\n';
+                };
+                
+                // Execute code based on language
+                if (currentLanguage === 'javascript') {
+                    eval(code);
+                } else if (currentLanguage === 'python') {
+                    output.innerHTML = 'Python execution would require a backend service or WebAssembly.\nSimulated output:\n';
+                    // Simulate Python output
+                    if (code.includes('print')) {
+                        const matches = code.match(/print\(["'](.+?)["']\)/g);
+                        if (matches) {
+                            matches.forEach(match => {
+                                const text = match.match(/["'](.+?)["']/)[1];
+                                output.innerHTML += text + '\n';
+                            });
+                        }
+                    }
+                } else if (currentLanguage === 'css') {
+                    output.innerHTML = 'CSS preview would require a live preview system.\nCurrent CSS:\n' + code;
+                }
+                
+                // Restore console.log
+                console.log = originalLog;
+                
+                // Mark as example completed
+                progress.examples.add('custom-code');
+                updateProgress();
+                
+            } catch (error) {
+                output.innerHTML = `<span class="text-red-400">Error: ${error.message}</span>`;
+            }
+        });
+
+        // Load example code
+        document.querySelectorAll('.example-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const example = this.dataset.example;
+                const code = examples[example][currentLanguage];
+                
+                if (editor && code) {
+                    editor.setValue(code);
+                    
+                    // Mark as example completed
+                    progress.examples.add(example);
+                    updateProgress();
+                }
+            });
+        });
+
+        // Update progress display
+        function updateProgress() {
+            const conceptsLearned = progress.concepts.size;
+            const examplesCompleted = progress.examples.size;
+            const totalConcepts = Object.keys(concepts).length;
+            const totalExamples = Object.keys(examples).length + 1; // +1 for custom code
+            
+            const progressPercentage = Math.round(((conceptsLearned + examplesCompleted) / (totalConcepts + totalExamples)) * 100);
+            
+            // Update progress circle
+            const circle = document.getElementById('progressCircle');
+            const circumference = 2 * Math.PI * 56;
+            const offset = circumference - (progressPercentage / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+            
+            // Update text
+            document.getElementById('progressText').textContent = progressPercentage + '%';
+            document.getElementById('conceptsLearned').textContent = `${conceptsLearned} / ${totalConcepts}`;
+            document.getElementById('examplesCompleted').textContent = `${examplesCompleted} / ${totalExamples}`;
+            
+            // Update achievements
+            if (conceptsLearned >= 1 && !progress.achievements.has('first-step')) {
+                progress.achievements.add('first-step');
+                document.querySelector('[data-achievement="first-step"]').classList.remove('opacity-50');
+            }
+            
+            if (conceptsLearned >= 3 && !progress.achievements.has('explorer')) {
+                progress.achievements.add('explorer');
+                document.querySelector('[data-achievement="explorer"]').classList.remove('opacity-50');
+            }
+            
+            if (examplesCompleted >= 5 && !progress.achievements.has('coder')) {
+                progress.achievements.add('coder');
+                document.querySelector('[data-achievement="coder"]').classList.remove('opacity-50');
+            }
+            
+            // Update learning steps
+            if (conceptsLearned >= 1) {
+                updateLearningStep(1, true);
+            }
+            if (conceptsLearned >= 2) {
+                updateLearningStep(2, true);
+            }
+            if (conceptsLearned >= 3) {
+                updateLearningStep(3, true);
+            }
+        }
+
+        function updateLearningStep(step, completed) {
+            const stepElement = document.querySelector(`[data-step="${step}"]`);
+            if (completed) {
+                stepElement.querySelector('.step-icon').classList.remove('bg-gray-200');
+                stepElement.querySelector('.step-icon').classList.add('bg-green-100', 'text-green-600');
+                stepElement.querySelector('.step-status').classList.remove('text-gray-400');
+                stepElement.querySelector('.step-status').classList.add('text-green-600');
+            }
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

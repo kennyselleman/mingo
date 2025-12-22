@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevConnect - Software Developer Job Board</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="mingo.png" type="image/png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1d2649 0%, orange 100%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .job-card {
+            transition: all 0.3s ease;
+        }
+        .job-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .filter-chip {
+            transition: all 0.2s ease;
+        }
+        .filter-chip:hover {
+            transform: scale(1.05);
+        }
+        .modal {
+            backdrop-filter: blur(5px);
+        }
+        .task-item {
+            transition: all 0.2s ease;
+        }
+        .task-item:hover {
+            background-color: #f3f4f6;
+        }
+        .salary-badge {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Chat Styles */
+        .chat-container {
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        .chat-input-container {
+            border-top: 1px solid #e5e7eb;
+            padding: 1rem;
+        }
+        .message {
+            margin-bottom: 1rem;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .message-bubble {
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            word-wrap: break-word;
+        }
+        .message-sent {
+            align-self: flex-end;
+            background-color: #3b82f6;
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .message-received {
+            align-self: flex-start;
+            background-color: #e5e7eb;
+            color: #1f2937;
+            border-bottom-left-radius: 0.25rem;
+        }
+        .typing-indicator {
+            display: none;
+            padding: 0.5rem;
+            color: #6b7280;
+            font-style: italic;
+        }
+        
+        /* Application Form Styles */
+        .form-section {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .form-section h3 {
+            color: #1f2937;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .file-upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .file-upload-area:hover {
+            border-color: #3b82f6;
+            background-color: #f0f9ff;
+        }
+        .file-upload-area.dragover {
+            border-color: #3b82f6;
+            background-color: #e0f2fe;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="gradient-bg text-white shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-2xl font-bold">Mi<span style="color: orange;">ngo</span>Connect</h1>
+                    <span class="text-sm opacity-80">Software Developer Job Board</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                   <a href="index.html"><button class="hover:text-blue-200 transition">Home</button></a>
+                    <button id="browseJobsBtn" class="hover:text-blue-200 transition">Browse Jobs</button>
+                    <button id="myApplicationsBtn" class="hover:text-blue-200 transition">My Applications</button>
+                    <button id="postJobBtn" class="bg-white text-purple-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition">
+                        <i class="fas fa-plus mr-2"></i>Post a Job
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="container mx-auto px-6 py-8">
+        
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <h2 class="text-5xl font-bold text-gray-800 mb-4">Find Your Perfect Developer</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Connect with talented software developers for your projects. Post detailed tasks and set your budget to find the right match.
+            </p>
+        </section>
+
+        <!-- Search and Filters -->
+        <section class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="grid md:grid-cols-4 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Search Jobs</label>
+                    <input type="text" id="searchInput" placeholder="Job title, skills, or company..." 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                    <select id="locationFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                        <option value="">All Locations</option>
+                        <option value="remote">kigali</option>
+                        <option value="new-york">New York</option>
+                        <option value="san-francisco">San Francisco</option>
+                        <option value="london">London</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Budget Range</label>
+                    <select id="budgetFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                        <option value="">Any Budget</option>
+                        <option value="0-1000">$0 - $1,000</option>
+                        <option value="1000-5000">$1,000 - $5,000</option>
+                        <option value="5000-10000">$5,000 - $10,000</option>
+                        <option value="10000+">$10,000+</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Experience Level</label>
+                    <select id="experienceFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                        <option value="">Any Level</option>
+                        <option value="entry">Entry Level</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="senior">Senior Level</option>
+                        <option value="expert">Expert</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Quick Filters -->
+            <div class="flex flex-wrap gap-2">
+                <span class="text-sm font-medium text-gray-700">Quick Filters:</span>
+                <button class="filter-chip px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm hover:bg-purple-200" data-filter="urgent">
+                    <i class="fas fa-clock mr-1"></i>Urgent
+                </button>
+                <button class="filter-chip px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm hover:bg-green-200" data-filter="remote">
+                    <i class="fas fa-home mr-1"></i>Remote
+                </button>
+                <button class="filter-chip px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200" data-filter="high-budget">
+                    <i class="fas fa-dollar-sign mr-1"></i>High Budget
+                </button>
+                <button class="filter-chip px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm hover:bg-yellow-200" data-filter="long-term">
+                    <i class="fas fa-calendar mr-1"></i>Long Term
+                </button>
+            </div>
+        </section>
+
+        <!-- Job Listings -->
+        <section id="jobListingsSection">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Available Developer Jobs</h3>
+                <span id="jobCount" class="text-gray-600">12 jobs found</span>
+            </div>
+            
+            <div id="jobListings" class="grid gap-6">
+                <!-- Job listings will be dynamically inserted here -->
+            </div>
+        </section>
+
+        <!-- My Applications Section -->
+        <section id="myApplicationsSection" class="hidden">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">My Applications</h3>
+            <div id="applicationsList" class="grid gap-6">
+                <!-- Applications will be dynamically inserted here -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Application Modal -->
+    <div id="applicationModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-4xl w-full max-h-screen overflow-y-auto">
+            <div class="p-6 border-b">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold text-gray-800">Apply for Position</h3>
+                    <button id="closeApplicationModal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <form id="applicationForm" class="p-6">
+                <!-- Job Info Summary -->
+                <div class="bg-blue-50 p-4 rounded-lg mb-6">
+                    <h4 id="appliedJobTitle" class="font-bold text-lg"></h4>
+                    <p id="appliedCompanyName" class="text-gray-600"></p>
+                </div>
+
+                <!-- Personal Information Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-user mr-2"></i>Personal Information</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                            <input type="text" name="fullName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                            <input type="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+                            <input type="tel" name="phone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Location *</label>
+                            <input type="text" name="location" required placeholder="City, State/Country" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                            <input type="date" name="dob" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">LinkedIn Profile</label>
+                            <input type="url" name="linkedin" placeholder="https://linkedin.com/in/yourprofile" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Background Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-briefcase mr-2"></i>Professional Background</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Current Job Title</label>
+                            <input type="text" name="currentTitle" placeholder="e.g., Senior Software Developer" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Years of Experience *</label>
+                            <select name="experienceYears" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select Experience</option>
+                                <option value="0-1">0-1 years</option>
+                                <option value="1-3">1-3 years</option>
+                                <option value="3-5">3-5 years</option>
+                                <option value="5-10">5-10 years</option>
+                                <option value="10+">10+ years</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Highest Education Level</label>
+                            <select name="education" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select Education</option>
+                                <option value="high-school">High School</option>
+                                <option value="bachelor">Bachelor's Degree</option>
+                                <option value="master">Master's Degree</option>
+                                <option value="phd">PhD</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Work Type</label>
+                            <select name="workType" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select Type</option>
+                                <option value="full-time">Full-time</option>
+                                <option value="part-time">Part-time</option>
+                                <option value="contract">Contract</option>
+                                <option value="freelance">Freelance</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills & Portfolio Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-code mr-2"></i>Skills & Portfolio</h3>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Technical Skills *</label>
+                        <textarea name="technicalSkills" required rows="3" placeholder="List your programming languages, frameworks, and tools (e.g., JavaScript, React, Node.js, Python, AWS)" 
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Portfolio/Projects</label>
+                        <textarea name="portfolio" rows="3" placeholder="Describe your best projects or provide links to your portfolio/GitHub" 
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Resume/CV *</label>
+                        <div class="file-upload-area" id="resumeUpload">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-600">Drag and drop your resume here or click to browse</p>
+                            <p class="text-sm text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX (Max 5MB)</p>
+                            <input type="file" id="resumeFile" accept=".pdf,.doc,.docx" class="hidden">
+                        </div>
+                        <div id="fileName" class="mt-2 text-sm text-green-600 hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Cover Letter Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-envelope mr-2"></i>Cover Letter</h3>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Why are you a good fit for this position? *</label>
+                        <textarea name="coverLetter" required rows="5" placeholder="Explain your relevant experience, skills, and why you're interested in this role..." 
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Expected Salary Range</label>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <input type="number" name="salaryMin" placeholder="Minimum ($)" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <input type="number" name="salaryMax" placeholder="Maximum ($)" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Availability Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-calendar mr-2"></i>Availability</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">When can you start? *</label>
+                            <input type="date" name="startDate" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Preferred working hours per week</label>
+                            <select name="hoursPerWeek" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select hours</option>
+                                <option value="10-20">10-20 hours</option>
+                                <option value="20-30">20-30 hours</option>
+                                <option value="30-40">30-40 hours</option>
+                                <option value="40+">40+ hours</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-4 pt-6">
+                    <button type="button" id="cancelApplication" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Submit Application
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chat Modal -->
+    <div id="chatModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full max-h-screen">
+            <div class="p-4 border-b bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 id="chatJobTitle" class="font-bold"></h3>
+                        <p id="chatCompanyName" class="text-sm opacity-90"></p>
+                    </div>
+                    <button id="closeChatModal" class="text-white hover:text-gray-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="chat-container">
+                <div id="chatMessages" class="chat-messages bg-gray-50">
+                    <!-- Messages will be dynamically inserted here -->
+                </div>
+                
+                <div class="chat-input-container">
+                    <div class="typing-indicator" id="typingIndicator">
+                        <span id="typingUser"></span> is typing...
+                    </div>
+                    <div class="flex space-x-2">
+                        <input type="text" id="messageInput" placeholder="Type your message..." 
+                               class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <button id="sendMessage" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Post Job Modal (Previous Implementation) -->
+    <div id="postJobModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-4xl w-full max-h-screen overflow-y-auto">
+            <div class="p-6 border-b">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold text-gray-800">Post a New Developer Job</h3>
+                    <button id="closePostJobModal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <form id="postJobForm" class="p-6 space-y-6">
+                <!-- Company Information -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Company Name *</label>
+                        <input type="text" id="companyName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Company Website</label>
+                        <input type="url" id="companyWebsite" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+
+                <!-- Job Details -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Job Title *</label>
+                    <input type="text" id="jobTitle" required placeholder="e.g., Full Stack Developer for E-commerce Platform" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Job Description *</label>
+                    <textarea id="jobDescription" required rows="4" placeholder="Describe your project and what you're looking for..." 
+                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"></textarea>
+                </div>
+
+                <!-- Specific Tasks -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Specific Tasks Developer Will Handle *</label>
+                    <div id="taskList" class="space-y-2 mb-3">
+                        <div class="flex items-center space-x-2">
+                            <input type="text" placeholder="e.g., Build user authentication system" 
+                                   class="flex-1 px-3 py-2 border border-gray-300 rounded-lg task-input">
+                            <button type="button" class="remove-task text-red-500 hover:text-red-700">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" id="addTask" class="text-purple-600 hover:text-purple-700 text-sm">
+                        <i class="fas fa-plus mr-1"></i>Add Another Task
+                    </button>
+                </div>
+
+                <!-- Requirements -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Required Skills & Technologies *</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        <label class="flex items-center"><input type="checkbox" value="javascript" class="mr-2"> JavaScript</label>
+                        <label class="flex items-center"><input type="checkbox" value="python" class="mr-2"> Python</label>
+                        <label class="flex items-center"><input type="checkbox" value="react" class="mr-2"> React</label>
+                        <label class="flex items-center"><input type="checkbox" value="nodejs" class="mr-2"> Node.js</label>
+                        <label class="flex items-center"><input type="checkbox" value="java" class="mr-2"> Java</label>
+                        <label class="flex items-center"><input type="checkbox" value="php" class="mr-2"> PHP</label>
+                        <label class="flex items-center"><input type="checkbox" value="database" class="mr-2"> Database</label>
+                        <label class="flex items-center"><input type="checkbox" value="aws" class="mr-2"> AWS</label>
+                    </div>
+                </div>
+
+                <!-- Compensation -->
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Budget Range *</label>
+                        <select id="budgetRange" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="">Select Budget</option>
+                            <option value="0-1000">$0 - $1,000</option>
+                            <option value="1000-5000">$1,000 - $5,000</option>
+                            <option value="5000-10000">$5,000 - $10,000</option>
+                            <option value="10000-25000">$10,000 - $25,000</option>
+                            <option value="25000+">$25,000+</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Payment Type</label>
+                        <select id="paymentType" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="fixed">Fixed Price</option>
+                            <option value="hourly">Hourly Rate</option>
+                            <option value="milestone">Milestone Based</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Experience Level *</label>
+                        <select id="experienceLevel" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="">Select Level</option>
+                            <option value="entry">Entry Level</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="senior">Senior Level</option>
+                            <option value="expert">Expert</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Location & Duration -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Location *</label>
+                        <select id="jobLocation" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="">Select Location</option>
+                            <option value="remote">kigali</option>
+                            <option value="new-york">New York</option>
+                            <option value="san-francisco">San Francisco</option>
+                            <option value="london">London</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Project Duration</label>
+                        <select id="projectDuration" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="less-than-1-month">Less than 1 month</option>
+                            <option value="1-3-months">1-3 months</option>
+                            <option value="3-6-months">3-6 months</option>
+                            <option value="more-than-6-months">More than 6 months</option>
+                            <option value="ongoing">Ongoing</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Urgency & Type -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Job Type</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center"><input type="radio" name="jobType" value="one-time" class="mr-2" checked> One-time Project</label>
+                            <label class="flex items-center"><input type="radio" name="jobType" value="ongoing" class="mr-2"> Ongoing Work</label>
+                            <label class="flex items-center"><input type="radio" name="jobType" value="full-time" class="mr-2"> Full-time Position</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Urgency</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center"><input type="radio" name="urgency" value="normal" class="mr-2" checked> Normal</label>
+                            <label class="flex items-center"><input type="radio" name="urgency" value="urgent" class="mr-2"> Urgent (Need someone ASAP)</label>
+                            <label class="flex items-center"><input type="radio" name="urgency" value="flexible" class="mr-2"> Flexible Timeline</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Contact Email *</label>
+                        <input type="email" id="contactEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Contact Phone</label>
+                        <input type="tel" id="contactPhone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-4 pt-6">
+                    <button type="button" id="cancelPost" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                        Post Job
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        let jobListings = [
+            {
+                id: 1,
+                title: "Full Stack Developer for E-commerce Platform",
+                company: "TechStart Inc.",
+                location: "remote",
+                budget: "5000-10000",
+                experience: "intermediate",
+                type: "one-time",
+                urgency: "normal",
+                description: "We need a full stack developer to build our e-commerce platform from scratch.",
+                tasks: ["Design authentication system", "Create product catalog", "Implement shopping cart", "Integrate payment gateway", "Build admin dashboard"],
+                skills: ["javascript", "react", "nodejs", "database"],
+                budgetDisplay: "$5,000 - $10,000",
+                duration: "1-3-months",
+                contact: "jobs@techstart.com",
+                posted: "2 days ago",
+                applications: []
+            }
+        ];
+
+        let applications = [];
+        let currentChat = null;
+        let typingTimer = null;
+
+        // DOM elements
+        const jobListingsContainer = document.getElementById('jobListings');
+        const applicationsListContainer = document.getElementById('applicationsList');
+        const applicationModal = document.getElementById('applicationModal');
+        const chatModal = document.getElementById('chatModal');
+        const postJobModal = document.getElementById('postJobModal');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderJobListings(jobListings);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Navigation
+            document.getElementById('browseJobsBtn').addEventListener('click', () => showSection('jobs'));
+            document.getElementById('myApplicationsBtn').addEventListener('click', () => showSection('applications'));
+            
+            // Modal controls
+            document.getElementById('postJobBtn').addEventListener('click', () => postJobModal.classList.remove('hidden'));
+            document.getElementById('closeApplicationModal').addEventListener('click', () => applicationModal.classList.add('hidden'));
+            document.getElementById('closeChatModal').addEventListener('click', () => chatModal.classList.add('hidden'));
+            document.getElementById('closePostJobModal').addEventListener('click', () => postJobModal.classList.add('hidden'));
+            
+            // Form submissions
+            document.getElementById('applicationForm').addEventListener('submit', handleApplication);
+            document.getElementById('postJobForm').addEventListener('submit', handleJobPost);
+            
+            // Chat functionality
+            document.getElementById('sendMessage').addEventListener('click', sendMessage);
+            document.getElementById('messageInput').addEventListener('keypress', handleMessageInput);
+            
+            // File upload
+            document.getElementById('resumeUpload').addEventListener('click', () => document.getElementById('resumeFile').click());
+            document.getElementById('resumeFile').addEventListener('change', handleFileUpload);
+            
+            // Search and filters
+            document.getElementById('searchInput').addEventListener('input', filterJobs);
+            document.getElementById('locationFilter').addEventListener('change', filterJobs);
+            document.getElementById('budgetFilter').addEventListener('change', filterJobs);
+            document.getElementById('experienceFilter').addEventListener('change', filterJobs);
+            
+            // Quick filters
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    this.classList.toggle('bg-purple-600');
+                    this.classList.toggle('text-white');
+                    this.classList.toggle('bg-purple-100');
+                    this.classList.toggle('text-purple-700');
+                    filterJobs();
+                });
+            });
+            
+            // Close modals on outside click
+            window.addEventListener('click', function(e) {
+                if (e.target === postJobModal) postJobModal.classList.add('hidden');
+                if (e.target === applicationModal) applicationModal.classList.add('hidden');
+                if (e.target === chatModal) chatModal.classList.add('hidden');
+            });
+        }
+
+        function showSection(section) {
+            const jobsSection = document.getElementById('jobListingsSection');
+            const applicationsSection = document.getElementById('myApplicationsSection');
+            
+            if (section === 'jobs') {
+                jobsSection.classList.remove('hidden');
+                applicationsSection.classList.add('hidden');
+            } else {
+                jobsSection.classList.add('hidden');
+                applicationsSection.classList.remove('hidden');
+                renderApplications();
+            }
+        }
+
+        function renderJobListings(jobs) {
+            jobListingsContainer.innerHTML = '';
+            document.getElementById('jobCount').textContent = `${jobs.length} jobs found`;
+            
+            jobs.forEach(job => {
+                const jobCard = createJobCard(job);
+                jobListingsContainer.appendChild(jobCard);
+            });
+        }
+
+        function createJobCard(job) {
+            const card = document.createElement('div');
+            card.className = 'job-card bg-white rounded-xl shadow-lg p-6 cursor-pointer';
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h4 class="text-xl font-bold text-gray-800 mb-1">${job.title}</h4>
+                        <p class="text-gray-600">${job.company}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="salary-badge bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold">
+                            ${job.budgetDisplay}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
+                        <i class="fas fa-map-marker-alt mr-1"></i>${formatLocation(job.location)}
+                    </span>
+                    <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm">
+                        <i class="fas fa-user mr-1"></i>${formatExperience(job.experience)}
+                    </span>
+                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">
+                        <i class="fas fa-clock mr-1"></i>${job.posted}
+                    </span>
+                    ${job.urgency === 'urgent' ? '<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-sm"><i class="fas fa-exclamation-circle mr-1"></i>Urgent</span>' : ''}
+                    ${job.type === 'remote' ? '<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm"><i class="fas fa-home mr-1"></i>Remote</span>' : ''}
+                </div>
+                
+                <p class="text-gray-600 mb-4 line-clamp-2">${job.description}</p>
+                
+                <div class="mb-4">
+                    <h5 class="font-semibold mb-2">Key Tasks:</h5>
+                    <ul class="space-y-1">
+                        ${job.tasks.slice(0, 3).map(task => `<li class="text-sm text-gray-600"><i class="fas fa-check-circle text-green-500 mr-2"></i>${task}</li>`).join('')}
+                        ${job.tasks.length > 3 ? `<li class="text-sm text-gray-500">+${job.tasks.length - 3} more tasks...</li>` : ''}
+                    </ul>
+                </div>
+                
+                <div class="flex flex-wrap gap-1 mb-4">
+                    ${job.skills.map(skill => `<span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">${skill}</span>`).join('')}
+                </div>
+                
+                <div class="flex justify-between items-center pt-4 border-t">
+                    <span class="text-sm text-gray-500">${job.duration}</span>
+                    <button class="apply-btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition" data-job-id="${job.id}">
+                        Apply Now
+                    </button>
+                </div>
+            `;
+            
+            card.querySelector('.apply-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                showApplicationModal(job);
+            });
+            
+            card.addEventListener('click', () => showJobDetails(job));
+            return card;
+        }
+
+        function showApplicationModal(job) {
+            document.getElementById('appliedJobTitle').textContent = job.title;
+            document.getElementById('appliedCompanyName').textContent = job.company;
+            document.getElementById('applicationForm').dataset.jobId = job.id;
+            applicationModal.classList.remove('hidden');
+        }
+
+        function handleApplication(e) {
+            e.preventDefault();
+            
+            const jobId = parseInt(e.target.dataset.jobId);
+            const formData = new FormData(e.target);
+            
+            const application = {
+                id: applications.length + 1,
+                jobId: jobId,
+                job: jobListings.find(j => j.id === jobId),
+                applicantInfo: {
+                    fullName: formData.get('fullName'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    location: formData.get('location'),
+                    dob: formData.get('dob'),
+                    linkedin: formData.get('linkedin'),
+                    currentTitle: formData.get('currentTitle'),
+                    experienceYears: formData.get('experienceYears'),
+                    education: formData.get('education'),
+                    workType: formData.get('workType'),
+                    technicalSkills: formData.get('technicalSkills'),
+                    portfolio: formData.get('portfolio'),
+                    coverLetter: formData.get('coverLetter'),
+                    salaryMin: formData.get('salaryMin'),
+                    salaryMax: formData.get('salaryMax'),
+                    startDate: formData.get('startDate'),
+                    hoursPerWeek: formData.get('hoursPerWeek')
+                },
+                status: 'pending',
+                appliedDate: new Date().toLocaleDateString(),
+                messages: [
+                    {
+                        id: 1,
+                        sender: 'applicant',
+                        text: `Hi! I'm ${formData.get('fullName')}. I've submitted my application for this position and would love to discuss it further.`,
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            };
+            
+            applications.push(application);
+            applicationModal.classList.add('hidden');
+            e.target.reset();
+            
+            alert('Application submitted successfully! You can now chat with the employer.');
+            
+            // Show chat interface
+            showChatInterface(application);
+        }
+
+        function showChatInterface(application) {
+            currentChat = application;
+            document.getElementById('chatJobTitle').textContent = application.job.title;
+            document.getElementById('chatCompanyName').textContent = application.job.company;
+            
+            renderChatMessages();
+            chatModal.classList.remove('hidden');
+            
+            // Auto-populate first message
+            document.getElementById('messageInput').value = `Hi! I've just applied for the ${application.job.title} position. I'd love to discuss the role and my qualifications.`;
+        }
+
+        function renderChatMessages() {
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.innerHTML = '';
+            
+            currentChat.messages.forEach(message => {
+                const messageDiv = createMessageElement(message);
+                messagesContainer.appendChild(messageDiv);
+            });
+            
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function createMessageElement(message) {
+            const div = document.createElement('div');
+            div.className = `message flex ${message.sender === 'applicant' ? 'justify-end' : 'justify-start'}`;
+            div.innerHTML = `
+                <div class="message-bubble ${message.sender === 'applicant' ? 'message-sent' : 'message-received'}">
+                    <p>${message.text}</p>
+                    <small class="text-xs opacity-70">${formatTime(message.timestamp)}</small>
+                </div>
+            `;
+            return div;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const message = {
+                id: currentChat.messages.length + 1,
+                sender: 'applicant',
+                text: text,
+                timestamp: new Date().toISOString()
+            };
+            
+            currentChat.messages.push(message);
+            renderChatMessages();
+            input.value = '';
+            
+            // Simulate typing indicator
+            setTimeout(() => {
+                document.getElementById('typingIndicator').style.display = 'block';
+                document.getElementById('typingUser').textContent = currentChat.job.company;
+            }, 1000);
+            
+            // Simulate response
+            setTimeout(() => {
+                document.getElementById('typingIndicator').style.display = 'none';
+                const response = {
+                    id: currentChat.messages.length + 1,
+                    sender: 'employer',
+                    text: `Thanks for your message! We've received your application for the ${currentChat.job.title} position. We'll review it and get back to you soon.`,
+                    timestamp: new Date().toISOString()
+                };
+                currentChat.messages.push(response);
+                renderChatMessages();
+            }, 3000);
+        }
+
+        function handleMessageInput(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            } else {
+                // Show typing indicator
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(() => {
+                    document.getElementById('typingIndicator').style.display = 'none';
+                }, 1000);
+            }
+        }
+
+        function renderApplications() {
+            applicationsListContainer.innerHTML = '';
+            
+            if (applications.length === 0) {
+                applicationsListContainer.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500 text-lg">You haven't applied to any jobs yet.</p>
+                        <button onclick="showSection('jobs')" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                            Browse Jobs
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            applications.forEach(app => {
+                const appCard = createApplicationCard(app);
+                applicationsListContainer.appendChild(appCard);
+            });
+        }
+
+        function createApplicationCard(application) {
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-xl shadow-lg p-6';
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h4 class="text-xl font-bold text-gray-800 mb-1">${application.job.title}</h4>
+                        <p class="text-gray-600">${application.job.company}</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-sm ${getStatusColor(application.status)}">
+                        ${application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                    </span>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <p class="text-sm text-gray-600">Applied on</p>
+                        <p class="font-semibold">${application.appliedDate}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Expected Salary</p>
+                        <p class="font-semibold">$${application.applicantInfo.salaryMin} - $${application.applicantInfo.salaryMax}</p>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm text-gray-600 mb-2">Your Message:</p>
+                    <p class="text-gray-800">${application.messages[0]?.text || 'No messages yet'}</p>
+                </div>
+                
+                <div class="flex space-x-4 pt-4 border-t">
+                    <button onclick="openChat(${application.id})" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-comments mr-2"></i>Continue Chat
+                    </button>
+                    <button onclick="viewApplicationDetails(${application.id})" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        <i class="fas fa-eye mr-2"></i>View Details
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'pending': 'bg-yellow-100 text-yellow-800',
+                'reviewed': 'bg-blue-100 text-blue-800',
+                'accepted': 'bg-green-100 text-green-800',
+                'rejected': 'bg-red-100 text-red-800'
+            };
+            return colors[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        function openChat(applicationId) {
+            currentChat = applications.find(app => app.id === applicationId);
+            if (currentChat) {
+                showChatInterface(currentChat);
+            }
+        }
+
+        function viewApplicationDetails(applicationId) {
+            const app = applications.find(app => app.id === applicationId);
+            if (app) {
+                alert(`Application Details:\n\nName: ${app.applicantInfo.fullName}\nEmail: ${app.applicantInfo.email}\nPhone: ${app.applicantInfo.phone}\nLocation: ${app.applicantInfo.location}\nExperience: ${app.applicantInfo.experienceYears}\nSkills: ${app.applicantInfo.technicalSkills}`);
+            }
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatLocation(location) {
+            const locations = {
+                'remote': 'Remote',
+                'new-york': 'New York',
+                'san-francisco': 'San Francisco',
+                'london': 'London',
+                'other': 'Other'
+            };
+            return locations[location] || location;
+        }
+
+        function formatExperience(level) {
+            const levels = {
+                'entry': 'Entry Level',
+                'intermediate': 'Intermediate',
+                'senior': 'Senior Level',
+                'expert': 'Expert'
+            };
+            return levels[level] || level;
+        }
+
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const fileName = document.getElementById('fileName');
+                fileName.textContent = `Uploaded: ${file.name}`;
+                fileName.classList.remove('hidden');
+            }
+        }
+
+        function handleJobPost(e) {
+            e.preventDefault();
+            // Existing job posting logic...
+            postJobModal.classList.add('hidden');
+            alert('Job posted successfully!');
+        }
+
+        function filterJobs() {
+            // Existing filtering logic...
+        }
+    </script>
+</body>
+</html>

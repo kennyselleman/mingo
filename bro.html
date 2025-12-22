@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mingo Browser</title>
+
+<style>
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ===== NAV ===== */
+.nav{
+  display:flex;
+  padding:8px 12px;
+}
+.nav button{
+  border:none;
+  background:#062a3b;
+  padding:6px 10px;
+  border-radius:50%;
+  cursor:pointer;
+  margin-right:6px;
+}
+
+/* ===== HOME ===== */
+.home{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.logo{
+  font-size:90px;
+  font-weight:bold;
+  letter-spacing:-3px;
+}
+.logo span:nth-child(1){color:#4285f4}
+.logo span:nth-child(2){color:#ea4335}
+.logo span:nth-child(3){color:#fbbc05}
+.logo span:nth-child(4){color:#4285f4}
+.logo span:nth-child(5){color:#34a853}
+.logo span:nth-child(6){color:#ea4335}
+
+.search-box{
+  margin-top:25px;
+  width:600px;
+  position:relative;
+}
+.search-box input{
+  width:100%;
+  padding:14px 20px;
+  border-radius:30px;
+  border:1px solid #dcdcdc;
+  outline:none;
+  font-size:16px;
+}
+.results{
+  position:absolute;
+  top:55px;
+  left:0;
+  right:0;
+  border:1px solid #ddd;
+  background:#fff;
+  display:none;
+}
+.results div{
+  padding:10px 16px;
+  cursor:pointer;
+}
+
+/* ===== PROFILE ===== */
+.top-right{
+  position:absolute;
+  top:15px;
+  right:20px;
+}
+.profile{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:#f7adad;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-weight:bold;
+}
+.menu{
+  position:absolute;
+  right:0;
+  top:45px;
+  width:220px;
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:8px;
+  display:none;
+}
+.menu div{
+  padding:12px;
+  cursor:pointer;
+}
+
+/* ===== VIEW ===== */
+iframe{
+  width:100%;
+  height:100%;
+  border:none;
+  display:none;
+}
+
+/* ===== MODAL ===== */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+.box{
+  background:#fff;
+  padding:20px;
+  width:420px;
+  border-radius:10px;
+}
+.box input,.box select{
+  width:100%;
+  padding:8px;
+  margin-bottom:12px;
+}
+.box button{
+  padding:8px 14px;
+  border:none;
+  background:#4285f4;
+  color:#fff;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+/* them */
+
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 50px;
+    transition: background-color 0.5s, color 0.5s;
+    background-color: #ffffff; /* Light mode background */
+    color: #000000; /* Light mode text */
+  }
+
+  body.dark-mode {
+    background-color: #444343; /* Dark mode background */
+    color: #f1f1f1; /* Dark mode text */
+  }
+
+  .them {
+transition: background-color 0.3s, color 0.3s;
+position: fixed;       /* stays in place even when scrolling */
+bottom: 20px;          /* distance from the bottom */
+right: 20px;           /* distance from the right */
+width: 60px;           /* button width */
+height: 60px;          /* button height */
+border-radius: 50%;    /* makes it circular */
+background-color: #08213b; /* button color */
+color: white;          /* text color */
+border: none;          /* remove default border */
+font-size: 24px;       /* icon or text size */
+cursor: pointer;       /* pointer on hover */
+box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* optional shadow */
+display: flex;         /* center text/icon */
+align-items: center;
+justify-content: center;
+transition: background 0.3s; /* smooth hover effect */
+  }
+
+  .them:hover {
+    opacity: 0.8;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- NAV 
+<div class="nav">
+  <button onclick="goBack()">&#8592;</button>
+  <button onclick="goForward()">&#8594;</button>
+</div> -->
+
+<!-- PROFILE -->
+<div class="top-right">
+  <div class="profile" onclick="toggleMenu()">👤</div>
+  <div class="menu" id="menu">
+    <div onclick="openHost()">Web Host</div>
+    <div onclick="openEdit()">Edit Hosted Website</div>
+    <div onclick="openDelete()">Delete Hosted Website</div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="home" id="home">
+  <div class="logo">
+    <span>M</span><span>i</span><span>n</span><span>g</span><span>o</span>
+  </div>
+  <div class="search-box">
+    <input id="search" placeholder="Search hosted website">
+    <div class="results" id="results"></div>
+  </div>
+</div>
+
+<iframe id="view"></iframe>
+
+<!-- HOST -->
+<div class="modal" id="hostModal">
+  <div class="box">
+    <h3>Host Website</h3>
+    <input id="domain" placeholder="example.sele | .mingo | .dent | .dev">
+    <input type="file" id="hostFile" accept=".html">
+    <button onclick="host()">Host</button>
+    <button onclick="closeAll()">Close</button>
+  </div>
+</div>
+
+<!-- EDIT -->
+<div class="modal" id="editModal">
+  <div class="box">
+    <h3>Edit Hosted Website</h3>
+    <select id="editSelect"></select>
+    <input type="file" id="editFile" accept=".html">
+    <button onclick="editSite()">Save Changes</button>
+    <button onclick="closeAll()">Close</button>
+  </div>
+</div>
+
+<!-- DELETE -->
+<div class="modal" id="deleteModal">
+  <div class="box">
+    <h3>Delete Website</h3>
+    <select id="deleteSelect"></select>
+    <button onclick="removeSite()">Delete</button>
+    <button onclick="closeAll()">Close</button>
+  </div>
+</div>
+<button id="toggleBtn" class="them">☀️</button>
+<script>
+const ALLOWED_TLDS={
+  ".sele":"#1a73e8",
+  ".mingo":"#34a853",
+  ".dent":"#fb8c00",
+  ".dev":"#8e24aa"
+};
+
+const sites=()=>JSON.parse(localStorage.getItem("mingoSites")||"{}");
+let historyStack=[],pointer=-1;
+
+/* MENU */
+function toggleMenu(){
+  menu.style.display=menu.style.display==="block"?"none":"block";
+}
+
+/* SEARCH */
+search.oninput=()=>{
+  const v=search.value.toLowerCase();
+  results.innerHTML="";
+  if(!v){results.style.display="none";return;}
+
+  Object.keys(sites()).filter(d=>d.includes(v)).forEach(d=>{
+    const ext=Object.keys(ALLOWED_TLDS).find(t=>d.endsWith(t));
+    const row=document.createElement("div");
+    row.textContent=d;
+    row.style.color=ALLOWED_TLDS[ext];
+    row.onclick=()=>openSite(d);
+    results.appendChild(row);
+  });
+  results.style.display="block";
+};
+
+/* OPEN SITE */
+function openSite(domain){
+  const s=sites();
+  if(!s[domain]) return;
+
+  home.style.display="none";
+  view.style.display="block";
+  view.srcdoc=s[domain];
+
+  historyStack=historyStack.slice(0,pointer+1);
+  historyStack.push(domain);
+  pointer++;
+
+  results.style.display="none";
+}
+
+/* BACK / FORWARD – FIXED */
+function goBack(){
+  if(pointer>0){
+    pointer--;
+    view.srcdoc=sites()[historyStack[pointer]];
+  }
+}
+function goForward(){
+  if(pointer<historyStack.length-1){
+    pointer++;
+    view.srcdoc=sites()[historyStack[pointer]];
+  }
+}
+
+/* VALIDATE DOMAIN */
+function validDomain(d){
+  return Object.keys(ALLOWED_TLDS).some(t=>d.endsWith(t));
+}
+
+/* HOST */
+function openHost(){closeAll();hostModal.style.display="flex";}
+function host(){
+  const d=domain.value.trim();
+  const f=hostFile.files[0];
+  if(!validDomain(d)) return alert("Invalid TLD");
+  if(!f) return;
+
+  const r=new FileReader();
+  r.onload=()=>{
+    const s=sites();
+    s[d]=r.result;
+    localStorage.setItem("mingoSites",JSON.stringify(s));
+    closeAll();
+  };
+  r.readAsText(f);
+}
+
+/* EDIT */
+function openEdit(){
+  closeAll(); editModal.style.display="flex";
+  editSelect.innerHTML="";
+  Object.keys(sites()).forEach(d=>{
+    const o=document.createElement("option");
+    o.value=d;o.textContent=d;
+    editSelect.appendChild(o);
+  });
+}
+function editSite(){
+  const f=editFile.files[0];
+  if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    const s=sites();
+    s[editSelect.value]=r.result;
+    localStorage.setItem("mingoSites",JSON.stringify(s));
+    closeAll();
+  };
+  r.readAsText(f);
+}
+
+/* DELETE */
+function openDelete(){
+  closeAll(); deleteModal.style.display="flex";
+  deleteSelect.innerHTML="";
+  Object.keys(sites()).forEach(d=>{
+    const o=document.createElement("option");
+    o.value=d;o.textContent=d;
+    deleteSelect.appendChild(o);
+  });
+}
+function removeSite(){
+  const s=sites();
+  delete s[deleteSelect.value];
+  localStorage.setItem("mingoSites",JSON.stringify(s));
+  closeAll();
+}
+
+/* CLOSE */
+function closeAll(){
+  document.querySelectorAll(".modal").forEach(m=>m.style.display="none");
+  menu.style.display="none";
+}
+
+/* them */
+
+const button = document.getElementById('toggleBtn');
+
+button.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+});
+</script>
+
+</body>
+</html>
