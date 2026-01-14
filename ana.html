@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/codemirror@5.65.14/lib/codemirror.css" rel="stylesheet">
+<link rel="icon" href="mingo.png" type="image/png">
+<title>Mingo | Software Development Academy</title>
+
+<style>
+  /* header */
+  /* HEADER STYLING */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #1d263b;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 50px;
+  border-bottom: 1px solid #24307a;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+header .logo {
+  font-size: 24px;
+  letter-spacing: 3px;
+  font-weight: bold;
+}
+
+header .header-nav a {
+  margin-left: 20px;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 16px;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+header .header-nav a:hover {
+  color: orange;
+}
+
+header .header-right button {
+  background: transparent;
+  border: 1px solid orange;
+  color: orange;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+header .header-right button:hover {
+  background: orange;
+  color: #000;
+}
+
+header button {
+  background: transparent;
+  border: 1px solid orange;
+  color: orange;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+header button:hover {
+  background: orange;
+  color: #000;
+}
+
+/* Responsive header */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 20px;
+  }
+  header .header-nav {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header .header-right {
+    margin-top: 10px;
+    width: 100%;
+  }
+}
+/* ana */
+
+/* ================= MAIN ================= */
+main {
+  flex: 1;
+  max-width: 1300px;
+  margin: auto;
+  padding: 30px;
+}
+
+/* ================= UPLOAD ================= */
+.upload-box {
+  border: 2px dashed var(--border);
+  padding: 50px;
+  text-align: center;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+}
+
+.upload-box h2 {
+  margin-bottom: 10px;
+}
+
+.upload-box p {
+  color: var(--text-muted);
+}
+
+.upload-box input {
+  margin-top: 20px;
+}
+
+/* ================= GRID ================= */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+  margin-top: 30px;
+}
+
+/* ================= CARDS ================= */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+}
+
+.card h3 {
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.card p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+/* ================= LIST ================= */
+ul {
+  padding-left: 18px;
+}
+li {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.good { color: var(--good); }
+.warn { color: var(--warn); }
+.bad  { color: var(--bad); }
+
+/* ================= SCORE ================= */
+.score-box {
+  text-align: center;
+}
+.score {
+  font-size: 56px;
+  font-weight: bold;
+}
+.grade {
+  margin-top: 8px;
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
+/* footer */
+
+/* Allow page to scroll */
+html, body {
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* Main content should fill screen but allow scrolling */
+#mainContainer {
+    flex: 1;
+    min-height: calc(100vh - 80px); /* header height */
+}
+
+/* Footer naturally appears at bottom on scroll */
+.site-footer {
+    margin-top: 100px; /* space before footer */
+}
+
+
+/* ahahera */
+
+.site-footer {
+  background: linear-gradient(135deg, #0a0f1f, #0d1b2a);
+  color: #cfd8dc;
+  padding: 60px 20px 20px;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 40px;
+}
+
+.footer-logo {
+  font-size: 26px;
+  margin-bottom: 15px;
+}
+
+.footer-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #b0bec5;
+}
+
+.footer-column h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #ffffff;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 10px;
+}
+
+.footer-column ul li a,
+.footer-column p a {
+  color: #b0bec5;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.footer-column ul li a:hover,
+.footer-column p a:hover {
+  color: orange;
+}
+
+.footer-socials {
+  margin-top: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-socials a {
+  font-size: 14px;
+  color: orange;
+  text-decoration: none;
+  border: 1px solid orange;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.footer-socials a:hover {
+  background: rgb(241, 190, 94);
+  color: #0a0f1f;
+}
+
+/* ===== BOTTOM BAR ===== */
+.footer-bottom {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 13px;
+  color: #90a4ae;
+}
+
+.footer-legal a {
+  color: #90a4ae;
+  text-decoration: none;
+  margin: 0 6px;
+}
+
+.footer-legal a:hover {
+  color: rgb(236, 186, 93);
+}
+
+/* new */
+:root {
+  --bg-main: #0b1024;
+  --bg-card: #151c3d;
+  --border: #24307a;
+  --accent: #ff9800;
+  --good: #4caf50;
+  --warn: #ffc107;
+  --bad: #f44336;
+  --text-muted: #9aa7ff;
+}
+
+body {
+  background: var(--bg-main);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+</style>
+</head>
+<body>
+  <section>
+<header>
+  <div class="header-left">
+    <h1 class="logo"><span style="color:white">MI</span><span style="color:orange">NGO</span></h1>
+  </div>
+  <nav class="header-nav">
+    <a href="index.html" onclick="show('home')">Home</a>
+    <a href="#" onclick="show('hosting')">Hosting</a>
+    <a href="coding.html" onclick="show('lab')">Coding Lab</a>
+    <a href="ana.html" onclick="show('projects')">Pro-Analysis</a>
+    <a href="lass.html" onclick="show('projects')">learn Mingo</a>
+  </nav>
+  <button onclick="resetAnalysis()">New Analysis</button>
+</header>
+</section>
+
+<!-- UPLOAD -->
+<section id="upload" class="upload-box">
+  <h2>Professional Project Review</h2>
+  <p>Upload a project folder to analyze structure, quality, and readiness.</p>
+  <input type="file" webkitdirectory multiple onchange="analyze(this.files)">
+</section>
+
+<!-- RESULTS -->
+<section id="results" style="display:none">
+
+  <div class="dashboard">
+
+    <!-- OVERVIEW -->
+    <div class="card">
+      <h3>Executive Overview</h3>
+      <ul id="overview"></ul>
+    </div>
+
+    <!-- STRUCTURE -->
+    <div class="card">
+      <h3>Architecture & Structure</h3>
+      <ul id="structure"></ul>
+    </div>
+
+    <!-- CODE QUALITY -->
+    <div class="card">
+      <h3>Code Quality Signals</h3>
+      <ul id="code"></ul>
+    </div>
+
+    <!-- SCORE -->
+    <div class="card score-box">
+      <h3>Quality Score</h3>
+      <div id="score" class="score">0</div>
+      <div id="grade" class="grade"></div>
+    </div>
+
+    <!-- RECOMMENDATIONS -->
+    <div class="card" style="grid-column: 1 / -1">
+      <h3>Professional Recommendations</h3>
+      <ul id="recommendations"></ul>
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+  <!-- Bottom Bar -->
+ <footer class="site-footer">
+  <div class="footer-container">
+
+    <!-- Brand / About -->
+    <div class="footer-column">
+      <h2 class="footer-logo">Mi<span style="color: orange;">ngo</span></h2>
+      <p class="footer-text">
+        Mingo is a modern software development and hosting platform designed to
+        help developers build, learn, and deploy projects with confidence.
+      </p>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="footer-column">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#academy">Academy</a></li>
+        <li><a href="#hosting">Hosting</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+
+    <!-- Resources -->
+    <div class="footer-column">
+      <h3>Resources</h3>
+      <ul>
+        <li><a href="#">Documentation</a></li>
+        <li><a href="#">Developer Tools</a></li>
+        <li><a href="#">Community</a></li>
+        <li><a href="#">Support</a></li>
+      </ul>
+    </div>
+
+    <!-- Contact -->
+    <div class="footer-column">
+      <h3>Contact</h3>
+      <p>Email: <a href="mailto:kennyselleman@gmail.com">kennyselleman@gmail.com</a></p>
+      <p>Phone: +250 794 276 148</p>
+
+      <div class="footer-socials">
+        <a href="#" aria-label="Facebook">Facebook</a>
+        <a href="#" aria-label="Instagram">Instagram</a>
+        <a href="#" aria-label="WhatsApp">WhatsApp</a>
+        <a href="https://github.com/" aria-label="GitHub">GitHub</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="footer-bottom">
+    <p>© 2025 Mingo Platform. All rights reserved.</p>
+    <div class="footer-legal">
+      <a href="#">Privacy Policy</a>
+      <span>|</span>
+      <a href="#">Terms of Service</a>
+    </div>
+  </div>
+ </footer>
+
+<script>
+
+
+function resetAnalysis() {
+  document.getElementById("results").style.display = "none";
+  document.getElementById("upload").style.display = "block";
+}
+
+function analyze(files) {
+  const overview = document.getElementById("overview");
+  const structure = document.getElementById("structure");
+  const code = document.getElementById("code");
+  const recommendations = document.getElementById("recommendations");
+  const scoreEl = document.getElementById("score");
+  const gradeEl = document.getElementById("grade");
+
+  overview.innerHTML = "";
+  structure.innerHTML = "";
+  code.innerHTML = "";
+  recommendations.innerHTML = "";
+
+  document.getElementById("upload").style.display = "none";
+  document.getElementById("results").style.display = "block";
+
+  let html=0, css=0, js=0;
+  let folders = new Set();
+  let score = 100;
+
+  [...files].forEach(f => {
+    const ext = f.name.split(".").pop().toLowerCase();
+    if (f.webkitRelativePath.includes("/"))
+      folders.add(f.webkitRelativePath.split("/")[1]);
+
+    if (ext==="html") html++;
+    else if (ext==="css") css++;
+    else if (ext==="js") js++;
+  });
+
+  overview.innerHTML += `<li>Total Files: <b>${files.length}</b></li>`;
+  overview.innerHTML += `<li>HTML Files: ${html}</li>`;
+  overview.innerHTML += `<li>CSS Files: ${css}</li>`;
+  overview.innerHTML += `<li>JavaScript Files: ${js}</li>`;
+
+  ["css","js","assets","images"].forEach(f => {
+    if (folders.has(f)) {
+      structure.innerHTML += `<li class="good">✔ ${f}/ folder present</li>`;
+    } else {
+      structure.innerHTML += `<li class="warn">⚠ ${f}/ folder missing</li>`;
+      score -= 6;
+    }
+  });
+
+  if (html === 0) { code.innerHTML += `<li class="bad">✖ No HTML entry point</li>`; score -= 20; }
+  else code.innerHTML += `<li class="good">✔ Valid HTML structure</li>`;
+
+  if (css === 0) { code.innerHTML += `<li class="warn">⚠ No styling layer detected</li>`; score -= 10; }
+  else code.innerHTML += `<li class="good">✔ Styling layer present</li>`;
+
+  if (js === 0) { code.innerHTML += `<li class="warn">⚠ No application logic</li>`; score -= 10; }
+  else code.innerHTML += `<li class="good">✔ JavaScript logic detected</li>`;
+
+  let grade = "A";
+  if (score < 90) grade="B";
+  if (score < 75) grade="C";
+  if (score < 60) grade="D";
+  if (score < 45) grade="F";
+
+  scoreEl.textContent = score;
+  gradeEl.textContent = "GRADE " + grade;
+
+  recommendations.innerHTML += `<li>Improve folder consistency and separation of concerns.</li>`;
+  recommendations.innerHTML += `<li>Adopt linting and formatting standards.</li>`;
+  recommendations.innerHTML += `<li>Add documentation and README.</li>`;
+  recommendations.innerHTML += `<li>Prepare project for scalability and deployment.</li>`;
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="mingo.png" rel="icon" type="image/png">
+    <title>CyberHack - Mingo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e, #16213e);
+            color: #00d4ff;
+            font-family: 'Consolas', 'Monaco', monospace;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            grid-template-rows: 60px 1fr 120px;
+            height: 100vh;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid #00d4ff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff00ff;
+            text-shadow: 0 0 20px #ff00ff;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 20px;
+        }
+
+        .status-item {
+            padding: 5px 15px;
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 20px;
+            border: 1px solid #00d4ff;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: rgba(0, 20, 40, 0.6);
+            border: 1px solid #00d4ff;
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar h3 {
+            color: #ff00ff;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .mission-list {
+            list-style: none;
+        }
+
+        .mission-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid #00d4ff;
+            transition: all 0.3s ease;
+        }
+
+        .mission-item.completed {
+            background: rgba(0, 255, 0, 0.2);
+            border-left-color: #00ff00;
+            text-decoration: line-through;
+        }
+
+        .mission-item.active {
+            background: rgba(255, 0, 255, 0.2);
+            border-left-color: #ff00ff;
+            animation: pulse 2s infinite;
+        }
+
+        /* Main Terminal */
+        .terminal-area {
+            background: rgba(0, 10, 20, 0.8);
+            border: 1px solid #00d4ff;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #00d4ff;
+        }
+
+        .terminal-title {
+            color: #ff00ff;
+            font-size: 18px;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00ff00;
+            animation: blink 1s infinite;
+        }
+
+        .output-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .input-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0, 20, 40, 0.5);
+            border-radius: 5px;
+            border: 1px solid #00d4ff;
+        }
+
+        .prompt {
+            color: #ff00ff;
+            font-weight: bold;
+        }
+
+        .command-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #00d4ff;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+        }
+
+        /* Enhanced Command History */
+        .command-history {
+            position: fixed;
+            bottom: 140px;
+            left: 270px;
+            right: 320px;
+            background: rgba(0, 20, 40, 0.95);
+            border: 1px solid #00d4ff;
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 12px;
+            display: none;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .history-item {
+            padding: 5px 0;
+            color: #00d4ff;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-time {
+            color: #ff00ff;
+            font-size: 10px;
+        }
+
+        /* Enhanced Output Styles */
+        .output-line {
+            margin: 5px 0;
+            padding: 2px 0;
+            word-break: break-all;
+        }
+
+        .system-msg { color: #00d4ff; }
+        .success-msg { color: #00ff00; text-shadow: 0 0 5px #00ff00; }
+        .error-msg { color: #ff0040; text-shadow: 0 0 5px #ff0040; }
+        .warning-msg { color: #ffaa00; text-shadow: 0 0 5px #ffaa00; }
+        .mission-msg { color: #ff00ff; text-shadow: 0 0 5px #ff00ff; }
+        .home-msg { color: #ffff00; text-shadow: 0 0 5px #ffff00; font-weight: bold; }
+        .victory-msg { 
+            color: #00ff00; 
+            text-shadow: 0 0 10px #00ff00;
+            font-weight: bold;
+            font-size: 16px;
+            animation: victoryPulse 1s infinite;
+        }
+
+        /* Victory Animation */
+        @keyframes victoryPulse {
+            0%, 100% { 
+                opacity: 1; 
+                text-shadow: 0 0 10px #00ff00;
+            }
+            50% { 
+                opacity: 0.8; 
+                text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        .glitch {
+            animation: glitch 0.3s infinite;
+        }
+
+        /* Level 3 Hidden Code Display */
+        .hidden-code-display {
+            background: rgba(255, 0, 255, 0.2);
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff00ff;
+            text-shadow: 0 0 20px #ff00ff;
+            animation: codeFlash 0.5s infinite alternate;
+        }
+
+        @keyframes codeFlash {
+            0% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        /* Right Panel */
+        .right-panel {
+            background: rgba(0, 20, 40, 0.6);
+            border: 1px solid #00d4ff;
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .code-display {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .code-line {
+            margin: 2px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .progress-section {
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #ff00ff);
+            width: 10%;
+            transition: width 0.5s ease;
+        }
+
+        /* Bottom Control Panel */
+        .control-panel {
+            grid-column: 1 / -1;
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid #00d4ff;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid #00d4ff;
+            border-radius: 5px;
+            color: #00d4ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .level-indicator {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 200px 1fr 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 60px auto auto auto 100px;
+            }
+            
+            .sidebar, .right-panel {
+                max-height: 200px;
+                overflow-y: auto;
+            }
+            
+            .command-history {
+                left: 20px;
+                right: 20px;
+                bottom: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">CYBERHACK</div>
+            <div class="status-bar">
+                <div class="status-item">STATUS: ACTIVE</div>
+                <div class="status-item">STEP: <span id="currentLevel">1</span></div>
+                <div class="status-item">CONDITION: <span id="currentMission">1</span></div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h3>MISSION OBJECTIVES</h3>
+            <ul class="mission-list" id="missionList">
+                <li class="mission-item active">Step 1: XCOD Protocol</li>
+                <li class="mission-item">Step 2: Mingolod System</li>
+                <li class="mission-item">Step 3: Selemancodex</li>
+            </ul>
+            
+            <h3 style="margin-top: 30px;">AVAILABLE CODES</h3>
+            <div class="code-display" id="codeDisplay">
+                <div class="code-line system-msg">Awaiting commands...</div>
+            </div>
+        </div>
+
+        <!-- Main Terminal -->
+        <div class="terminal-area">
+            <div class="terminal-header">
+                <div class="terminal-title">SECURE TERMINAL ACCESS</div>
+                <div class="connection-status">
+                    <div class="status-dot"></div>
+                    <span>ENCRYPTED CONNECTION</span>
+                </div>
+            </div>
+            
+            <div class="output-area" id="outputArea">
+                <div class="output-line system-msg">[SYSTEM] CyberHack Elite Mingo v2.0</div>
+                <div class="output-line system-msg">[SYSTEM] Establishing secure connection...</div>
+                <div class="output-line success-msg">[SUCCESS] Connection established</div>
+                <div class="output-line mission-msg">[MISSION] Enter access code for Step 1: </div>
+            </div>
+            
+            <div class="input-area">
+                <span class="prompt">user@cyberhack:~$</span>
+                <input type="text" class="command-input" id="commandInput" autofocus>
+            </div>
+        </div>
+
+        <!-- Command History Panel -->
+        <div class="command-history" id="commandHistory"></div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <h3>SYSTEM LOG</h3>
+            <div class="code-display" id="systemLog" style="max-height: 150px;">
+                <div class="code-line">System initialized</div>
+                <div class="code-line">Awaiting user input...</div>
+            </div>
+            
+            <div class="progress-section">
+                <h3>PROGRESS</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 10%"></div>
+                </div>
+                <div style="text-align: center; font-size: 12px;">
+                    <span id="progressText">10% Complete</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-buttons">
+                <button class="control-btn" onclick="resetGame()">NEW TAB</button>
+                <button class="control-btn" onclick="showHelp()">HELP</button>
+                <button class="control-btn" onclick="toggleHistory()">HISTORY</button>
+            </div>
+            <div class="level-indicator" id="levelIndicator">
+                mingo hack system
+            </div>
+            <div class="control-buttons">
+                <button class="control-btn" onclick="clearTerminal()">CLEAR</button>
+               <a href="index.html"> <button class="control-btn">BACK</button></a>
+                <button class="control-btn" onclick="showCredits()">CREDITS</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let currentLevel = 1;
+        let currentMission = 1;
+        let gameState = {
+            level1: { mission1: false, mission2: false, mission3: false },
+            level2: { mission1: false, mission2: false, mission3: false, mission4: false },
+            level3: { mission1: false, mission2: false, mission3: false, mission4: false, hiddenCode: '' }
+        };
+
+        let commandHistory = [];
+        let historyVisible = false;
+        let level3Started = false;
+
+        const outputArea = document.getElementById('outputArea');
+        const commandInput = document.getElementById('commandInput');
+        const levelIndicator = document.getElementById('levelIndicator');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const commandHistoryDiv = document.getElementById('commandHistory');
+
+        // Add output to terminal
+        function addOutput(text, className = 'system-msg') {
+            const div = document.createElement('div');
+            div.className = `output-line ${className}`;
+            div.textContent = text;
+            outputArea.appendChild(div);
+            outputArea.scrollTop = outputArea.scrollHeight;
+        }
+
+        // Add command to history
+        function addToHistory(command) {
+            commandHistory.push({
+                command: command,
+                timestamp: new Date().toLocaleTimeString()
+            });
+            
+            if (commandHistory.length > 10) {
+                commandHistory.shift();
+            }
+            
+            updateHistoryDisplay();
+        }
+
+        // Update history display
+        function updateHistoryDisplay() {
+            commandHistoryDiv.innerHTML = '';
+            commandHistory.forEach((item) => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `<span>${item.command}</span><span class="history-time">[${item.timestamp}]</span>`;
+                commandHistoryDiv.appendChild(div);
+            });
+        }
+
+        // Toggle history visibility
+        function toggleHistory() {
+            historyVisible = !historyVisible;
+            commandHistoryDiv.style.display = historyVisible ? 'block' : 'none';
+        }
+
+        // Update system log
+        function updateSystemLog(text) {
+            const log = document.getElementById('systemLog');
+            const div = document.createElement('div');
+            div.className = 'code-line';
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
+            log.appendChild(div);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Update progress
+        function updateProgress() {
+            const totalMissions = 10;
+            const completedMissions = Object.values(gameState).reduce((total, level) => {
+                return total + Object.values(level).filter(mission => mission === true).length;
+            }, 0);
+            
+            const progress = (completedMissions / totalMissions) * 100;
+            progressFill.style.width = progress + '%';
+            progressText.textContent = `${Math.round(progress)}% Complete`;
+        }
+
+        // Level 1 Logic
+        function handleLevel1(command) {
+            switch(currentMission) {
+                case 1:
+                    if (command === 'xcod') {
+                        gameState.level1.mission1 = true;
+                        addOutput('[SUCCESS] XCOD protocol activated', 'success-msg');
+                        updateSystemLog('XCOD protocol engaged');
+                        addOutput('[VONDITION] Condition 2: Input target website URL', 'mission-msg');
+                        currentMission = 2;
+                    } else {
+                        addOutput('[ERROR] Invalid access code', 'error-msg');
+                    }
+                    break;
+                    
+                case 2:
+                    if (command.startsWith('http')) {
+                        gameState.level1.mission2 = true;
+                        addOutput(`[SUCCESS] Target locked: ${command}`, 'success-msg');
+                        updateSystemLog(`Target acquired: ${command}`);
+                        addOutput('[MISSION] Mission 3: Enter "mingohax" protocol', 'mission-msg');
+                        currentMission = 3;
+                    } else {
+                        addOutput('[ERROR] Invalid URL format', 'error-msg');
+                    }
+                    break;
+                    
+                case 3:
+                    if (command === 'mingohax') {
+                        gameState.level1.mission3 = true;
+                        addOutput('[SUCCESS] Website infiltration complete!', 'success-msg');
+                        updateSystemLog('Step 1 completed');
+                        addOutput('[STEP UP] Preparing Step 2...', 'warning-msg');
+                        setTimeout(() => {
+                            currentLevel = 2;
+                            currentMission = 1;
+                            updateGameInterface();
+                            addOutput('[SYSTEM] Step 2: Mingolod System ready', 'system-msg');
+                            addOutput('[CONDITION] Enter access code:', 'mission-msg');
+                        }, 2000);
+                    } else {
+                        addOutput('[ERROR] Invalid protocol', 'error-msg');
+                    }
+                    break;
+            }
+        }
+
+        // Level 2 Logic
+        function handleLevel2(command) {
+            switch(currentMission) {
+                case 1:
+                    if (command === 'mingolod') {
+                        gameState.level2.mission1 = true;
+                        addOutput('[SUCCESS] Mingolod system online', 'success-msg');
+                        updateSystemLog('Mingolod system activated');
+                        addOutput('[CONDITION] Type "autocodex" for auto-generation', 'mission-msg');
+                        currentMission = 2;
+                    } else {
+                        addOutput('[ERROR] Invalid system code', 'error-msg');
+                    }
+                    break;
+                    
+                case 2:
+                    if (command === 'autocodex') {
+                        gameState.level2.mission2 = true;
+                        addOutput('[SUCCESS] Auto-generation initiated', 'success-msg');
+                        simulateAutoGeneration();
+                        addOutput('[CONDITION] Input target website URL', 'mission-msg');
+                        currentMission = 3;
+                    } else {
+                        addOutput('[ERROR] Invalid command', 'error-msg');
+                    }
+                    break;
+                    
+                case 3:
+                    if (command.startsWith('http')) {
+                        gameState.level2.mission3 = true;
+                        addOutput(`[SUCCESS] Target: ${command}`, 'success-msg');
+                        updateSystemLog(`Target confirmed: ${command}`);
+                        addOutput('[CONDITION] Deploy "donexp" exploit', 'mission-msg');
+                        currentMission = 4;
+                    } else {
+                        addOutput('[ERROR] Invalid URL', 'error-msg');
+                    }
+                    break;
+                    
+                case 4:
+                    if (command === 'donexp') {
+                        gameState.level2.mission4 = true;
+                        addOutput('[SUCCESS] Exploit successful!', 'success-msg');
+                        updateSystemLog('Step 2 completed');
+                        addOutput('[STEP UP] Final step approaching...', 'warning-msg');
+                        setTimeout(() => {
+                            currentLevel = 3;
+                            currentMission = 1;
+                            updateGameInterface();
+                            addOutput('[SYSTEM] Step 3: Selemancodex initiated', 'system-msg');
+                            addOutput('[CONDITION] Enter final code:', 'mission-msg');
+                            level3Started = true;
+                        }, 2000);
+                    } else {
+                        addOutput('[ERROR] Invalid exploit', 'error-msg');
+                    }
+                    break;
+            }
+        }
+
+        // Level 3 Logic - FIXED VERSION
+        function handleLevel3(command) {
+            switch(currentMission) {
+                case 1:
+                    if (command === 'selemancodex') {
+                        gameState.level3.mission1 = true;
+                        addOutput('[SUCCESS] Final protocol engaged', 'success-msg');
+                        updateSystemLog('Selemancodex activated');
+                        addOutput('[CONDITION] Input target website URL', 'mission-msg');
+                        currentMission = 2;
+                    } else {
+                        addOutput('[ERROR] Invalid final code', 'error-msg');
+                    }
+                    break;
+                    
+                case 2:
+                    if (command.startsWith('http')) {
+                        gameState.level3.mission2 = true;
+                        addOutput(`[SUCCESS] Final target: ${command}`, 'success-msg');
+                        addOutput('[CONDITION] Memorize Verfication code (5 seconds)', 'mission-msg');
+                        showHiddenCode();
+                        currentMission = 3; // Move to mission 3 after showing code
+                    } else {
+                        addOutput('[ERROR] Invalid URL', 'error-msg');
+                    }
+                    break;
+                    
+                case 3:
+                    // Check if hidden code exists and matches
+                    if (gameState.level3.hiddenCode && command === gameState.level3.hiddenCode) {
+                        gameState.level3.mission3 = true;
+                        addOutput('[SUCCESS] Code verified!', 'success-msg');
+                        updateSystemLog('Hidden code accepted');
+                        simulateFinalSequence();
+                        addOutput('[CONDITION] Input owner control code', 'mission-msg');
+                        currentMission = 4;
+                    } else {
+                        addOutput('[ERROR] Incorrect code. Try again!', 'error-msg');
+                        addOutput('[HINT] Wait for the hidden code to appear first', 'warning-msg');
+                    }
+                    break;
+                    
+                case 4:
+                    // Accept any control code for the final mission
+                    if (command.trim() !== '') {
+                        gameState.level3.mission4 = true;
+                        addOutput('[VICTORY] Website control established!', 'victory-msg');
+                        addOutput('[🎉 HACKING COMPLETED 🎉] You are now a master hacker!', 'victory-msg');
+                        addOutput('[🏆] All System completed successfully!', 'victory-msg');
+                        addOutput('[⭐] Certified Code Breaker Achievement Unlocked!', 'victory-msg');
+                        updateSystemLog('HACKING COMPLETED - nOW THIS WEBSITE IS YOURS');
+                        celebrateVictory();
+                        
+                        // Show completion in level indicator
+                        levelIndicator.textContent = '🏆 HACK COMPLETE 🏆';
+                        levelIndicator.style.color = '#00ff00';
+                        levelIndicator.style.textShadow = '0 0 20px #00ff00';
+                    } else {
+                        addOutput('[ERROR] Please enter a control code', 'error-msg');
+                    }
+                    break;
+            }
+        }
+
+        // Enhanced hidden code display
+        function showHiddenCode() {
+            const codes = ['X7K9M', 'P3Q8L', 'T1R6N', 'W4G2H'];
+            const randomCode = codes[Math.floor(Math.random() * codes.length)];
+            gameState.level3.hiddenCode = randomCode;
+            
+            // Create special display for hidden code
+            const codeDiv = document.createElement('div');
+            codeDiv.className = 'hidden-code-display';
+            codeDiv.textContent = `HIDDEN CODE: ${randomCode}`;
+            outputArea.appendChild(codeDiv);
+            
+            addOutput('[⚠️] MEMORIZE THIS VERFICATION CODE - IT WILL DISAPPEAR IN 5 SECONDS!', 'warning-msg');
+            
+            setTimeout(() => {
+                codeDiv.style.display = 'none';
+                addOutput('[SYSTEM] Code hidden. Enter the code to proceed.', 'system-msg');
+                addOutput('[INPUT] Type the hidden code:', 'mission-msg');
+            }, 5000);
+        }
+
+        // Simulate auto code generation
+        function simulateAutoGeneration() {
+            const sequences = [
+                'Initializing auto-generator...',
+                'Analyzing target vulnerabilities...',
+                'Compiling exploit code...',
+                'Ready for deployment!'
+            ];
+            
+            sequences.forEach((seq, index) => {
+                setTimeout(() => {
+                    addOutput(`[AUTO] ${seq}`, 'warning-msg');
+                }, index * 600);
+            });
+        }
+
+        // Simulate final sequence
+        function simulateFinalSequence() {
+            const finalCodes = [
+                'Finalizing exploit...',
+                'Bypassing last defenses...',
+                'Injecting control code...',
+                'System ready for takeover!'
+            ];
+            
+            finalCodes.forEach((code, index) => {
+                setTimeout(() => {
+                    addOutput(`[FINAL] ${code}`, 'warning-msg');
+                }, index * 400);
+            });
+        }
+
+        // Enhanced victory celebration
+        function celebrateVictory() {
+            const messages = [
+                '🏆 MASTER HACKER UNLOCKED!',
+                '🎯 ALL MISSIONS COMPLETED!',
+                '⭐ CERTIFIED CODE BREAKER!',
+                '🚀 SYSTEM DOMINATION ACHIEVED!',
+                '💯 PERFECT RUN COMPLETED!'
+            ];
+            
+            messages.forEach((msg, index) => {
+                setTimeout(() => {
+                    addOutput(msg, 'victory-msg');
+                }, index * 1000);
+            });
+
+            // Final celebration after all messages
+            setTimeout(() => {
+                addOutput('', 'system-msg');
+                addOutput('╔════════════════════════════════════╗', 'victory-msg');
+                addOutput('║   CONGRATULATIONS MASTER HACKER    ║', 'victory-msg');
+                addOutput('║    YOU HAVE COMPLETED ALL SYSTEM   ║', 'victory-msg');
+                addOutput('╚════════════════════════════════════╝', 'victory-msg');
+            }, messages.length * 1000 + 1000);
+        }
+
+        // Update game interface
+        function updateGameInterface() {
+            updateProgress();
+            
+            const levelNames = {
+                1: 'STEP 1 - XCOD PROTOCOL',
+                2: 'STEP 2 - MINGOLODY SYSTEM',
+                3: 'STEP 3 - SELEMANCODEX'
+            };
+            
+            if (currentLevel === 3 && gameState.level3.mission4) {
+                levelIndicator.textContent = '🏆 STSTEM COMPLETE 🏆';
+                levelIndicator.style.color = '#00ff00';
+                levelIndicator.style.textShadow = '0 0 20px #00ff00';
+            } else {
+                levelIndicator.textContent = levelNames[currentLevel];
+                levelIndicator.style.color = '#ff00ff';
+                levelIndicator.style.textShadow = '0 0 10px #ff00ff';
+            }
+            
+            document.getElementById('currentLevel').textContent = currentLevel;
+            document.getElementById('currentMission').textContent = currentMission;
+            
+            // Update mission list
+            const missionItems = document.querySelectorAll('.mission-item');
+            missionItems.forEach((item, index) => {
+                if (index < currentLevel - 1) {
+                    item.classList.add('completed');
+                    item.classList.remove('active');
+                } else if (index === currentLevel - 1) {
+                    item.classList.add('active');
+                    item.classList.remove('completed');
+                } else {
+                    item.classList.remove('active', 'completed');
+                }
+            });
+        }
+
+        // Command input handler
+        commandInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const command = this.value.trim().toLowerCase();
+                
+                if (command) {
+                    addOutput(`user@cyberhack:~$ ${this.value}`);
+                    addToHistory(this.value);
+                    
+                    // Special commands
+                    if (command === 'home' || command === 'home.html') {
+                        handleHomeCommand();
+                        this.value = '';
+                        return;
+                    }
+                    
+                    updateSystemLog(`Command executed: ${this.value}`);
+                    
+                    // Handle commands based on current level
+                    switch(currentLevel) {
+                        case 1:
+                            handleLevel1(command);
+                            break;
+                        case 2:
+                            handleLevel2(command);
+                            break;
+                        case 3:
+                            handleLevel3(command);
+                            break;
+                    }
+                    
+                    this.value = '';
+                }
+            }
+        });
+
+        // Control functions
+        function resetGame() {
+            location.reload();
+        }
+
+        function showHelp() {
+            addOutput('[HELP] Available commands:', 'system-msg');
+            addOutput('- step 1: xcod, mingohax', 'warning-msg');
+            addOutput('- step 2: mingolod, autocodex, donexp', 'warning-msg');
+            addOutput('- step 3: selemancodex', 'warning-msg');
+            addOutput('- founder: Dr Seleman (opens home)', 'warning-msg');
+            addOutput('- URLs must start with http/https', 'warning-msg');
+            addOutput('- step 3: Wait for hidden code, then enter it', 'warning-msg');
+        }
+
+        function clearTerminal() {
+            outputArea.innerHTML = '';
+            addOutput('[SYSTEM] Terminal cleared', 'system-msg');
+        }
+
+        function showCredits() {
+            addOutput('[CREDITS] CyberHack Elite Mingo v2.0', 'system-msg');
+            addOutput('Created by: mingo system', 'system-msg');
+            addOutput('© 2024 - All rights reserved', 'system-msg');
+        }
+
+        // Initialize
+        updateGameInterface();
+        commandInput.focus();
+        
+        // Keep focus on input
+        document.addEventListener('click', function() {
+            commandInput.focus();
+        });
+    </script>
+</body>
+</html>

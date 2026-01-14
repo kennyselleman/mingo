@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="mingo.png" type="image/png">
+<title>Mingo Academy | Professional Web Development</title>
+
+<style>
+/* ================= CORE THEME ================= */
+:root {
+  --bg: #0a0f1f;
+  --panel: #121936;
+  --panel-dark: #0e1430;
+  --border: #24307a;
+  --accent: #ff9800;
+  --text: #e6ebff;
+  --muted: #9aa7ff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Arial, sans-serif; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+}
+
+/* ================= SIDEBAR ================= */
+#sidebar {
+  width: 260px;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  overflow-y: auto;
+}
+
+#sidebar h2 {
+  margin-bottom: 20px;
+  color: var(--accent);
+}
+
+.topic {
+  padding: 12px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--panel-dark);
+}
+.topic:hover,
+.topic.active {
+  background: var(--accent);
+  color: #000;
+}
+ 
+.back {
+padding-top: 12px;
+padding: 12px;
+margin-bottom: 6px;
+border-radius: 8px;
+cursor: pointer;
+background: var(--panel-dark);
+margin-top: 6px;
+color: #fff;
+}
+.back:hover,
+.back.active{
+    background: var(--accent);
+    color: #000;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+/* ================= CONTENT ================= */
+#content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.lesson h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.lesson p {
+  line-height: 1.8;
+  color: var(--muted);
+  margin-bottom: 16px;
+  max-width: 900px;
+}
+
+pre {
+  background: #060a18;
+  border-left: 4px solid var(--accent);
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+button {
+  background: var(--accent);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* ================= QUIZ ================= */
+.quiz {
+  margin-top: 30px;
+}
+.quiz button {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+}
+.correct { background: #4caf50; }
+.wrong { background: #f44336; }
+
+/* ================= NOTES ================= */
+textarea {
+  width: 100%;
+  min-height: 200px;
+  background: #060a18;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  color: #fff;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ========== SIDEBAR ========== -->
+<aside id="sidebar">
+  <h2>Web Development</h2>
+  <div class="topic active" onclick="load('html')">HTML Fundamentals</div>
+  <div class="topic" onclick="load('css')">CSS Layout & Design</div>
+  <div class="topic" onclick="load('js')">JavaScript Core</div>
+  <div class="topic" onclick="load('dom')">DOM & Events</div>
+  <div class="topic" onclick="load('quiz')">Final Assessment</div>
+  <div class="topic" onclick="load('notes')">Study Notes</div>
+ <button class="back"><a href="index.html">Back Home</a></div></button> <button class="back"><a href="Dr Seleman.pdf">Mingo Book</a></div></button>
+ <a href="ore.html"><button class="back"><div>Mingolearn</div></button></a>
+</aside>
+
+<!-- ========== CONTENT ========== -->
+<main id="content"></main>
+
+<script>
+/* ================= LESSON DATA ================= */
+const lessons = {
+html: `
+<div class="lesson">
+<h1>HTML Fundamentals</h1>
+
+<p>
+HTML is the foundation of every webpage. It defines document structure, semantics,
+and accessibility. Without HTML, there is no web application.
+</p>
+
+<p>
+Modern HTML uses semantic elements such as <strong>&lt;header&gt;</strong>,
+<strong>&lt;section&gt;</strong>, and <strong>&lt;article&gt;</strong> to
+improve SEO and readability.
+</p>
+
+<pre>
+&lt;article&gt;
+  &lt;h1&gt;My First Page&lt;/h1&gt;
+  &lt;p&gt;This page is built using semantic HTML.&lt;/p&gt;
+&lt;/article&gt;
+</pre>
+
+<p>
+Professional developers write HTML that is readable, maintainable, and accessible.
+</p>
+</div>
+`,
+
+css: `
+<div class="lesson">
+<h1>CSS Layout & Design</h1>
+
+<p>
+CSS controls layout, responsiveness, and visual hierarchy. Modern layouts rely
+on Flexbox and Grid systems rather than floats.
+</p>
+
+<pre>
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+</pre>
+
+<p>
+Understanding CSS architecture is essential for scalable applications.
+</p>
+</div>
+`,
+
+js: `
+<div class="lesson">
+<h1>JavaScript Core</h1>
+
+<p>
+JavaScript provides logic, state management, and interactivity. It enables
+dynamic updates without reloading the page.
+</p>
+
+<pre>
+const button = document.querySelector("button");
+button.addEventListener("click", () => {
+  console.log("User clicked");
+});
+</pre>
+
+<p>
+Modern JavaScript emphasizes readability, modularity, and performance.
+</p>
+</div>
+`,
+
+dom: `
+<div class="lesson">
+<h1>DOM & Events</h1>
+
+<p>
+The DOM (Document Object Model) represents HTML as a tree structure. JavaScript
+interacts with this tree to manipulate the UI.
+</p>
+
+<pre>
+document.querySelector(".box").classList.add("active");
+</pre>
+
+<p>
+Understanding events is critical for building interactive applications.
+</p>
+</div>
+`,
+
+quiz: `
+<div class="lesson quiz">
+<h1>Final Assessment</h1>
+
+<p>Which language controls webpage structure?</p>
+<button onclick="check(this, true)">HTML</button>
+<button onclick="check(this, false)">CSS</button>
+
+<p style="margin-top:20px;">What makes a website interactive?</p>
+<button onclick="check(this, false)">HTML</button>
+<button onclick="check(this, true)">JavaScript</button>
+</div>
+`,
+
+notes: `
+<div class="lesson">
+<h1>Study Notes</h1>
+<textarea id="notes"></textarea>
+<button onclick="save()">Save Notes</button>
+</div>
+`
+};
+
+/* ================= LOGIC ================= */
+function load(section) {
+  document.querySelectorAll(".topic").forEach(t => t.classList.remove("active"));
+  event.target.classList.add("active");
+  document.getElementById("content").innerHTML = lessons[section];
+
+  if(section === "notes") {
+    document.getElementById("notes").value = localStorage.getItem("mingoNotes") || "";
+  }
+}
+
+function check(btn, ok) {
+  btn.classList.add(ok ? "correct" : "wrong");
+}
+
+function save() {
+  localStorage.setItem("mingoNotes", document.getElementById("notes").value);
+  alert("Notes saved");
+}
+
+/* Load default */
+load("html");
+</script>
+
+</body>
+</html>
